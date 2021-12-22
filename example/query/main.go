@@ -135,10 +135,8 @@ func run(ctx context.Context) error {
 			MinOpened:           1,
 			TrackSessionHandles: true,
 		},
-	}, []option.ClientOption{
-		// option.WithGRPCDialOption(grpc.WithChainUnaryInterceptor(UnaryInterceptor(pp.c))),
-		option.WithGRPCDialOption(grpc.WithChainStreamInterceptor(interceptor.StreamInterceptor(interceptor.WithDefaultDecorators()))),
-	}...)
+	}, option.WithGRPCDialOption(grpc.WithChainStreamInterceptor(interceptor.StreamInterceptor(interceptor.WithDefaultDecorators()))),
+	)
 	if err != nil {
 		return err
 	}
