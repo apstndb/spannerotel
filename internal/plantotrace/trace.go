@@ -75,7 +75,7 @@ func Span(ctx context.Context, stats *spanner.ResultSetStats) {
 }
 
 func maxVisible(planNodes []*spanner.PlanNode) int {
-	for i := len(planNodes) -1; i >= 0; i-- {
+	for i := len(planNodes) - 1; i >= 0; i-- {
 		if isVisible(planNodes[i]) {
 			return i
 		}

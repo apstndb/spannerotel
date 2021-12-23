@@ -100,9 +100,9 @@ func jaegerTracerProvider(url string) (sdktrace.SpanExporter, error) {
 }
 
 func main() {
-if err := run(context.Background()); err != nil {
-	log.Fatalln(err)
-}
+	if err := run(context.Background()); err != nil {
+		log.Fatalln(err)
+	}
 }
 
 func run(ctx context.Context) error {
@@ -159,4 +159,3 @@ func run(ctx context.Context) error {
 	}
 	return nil
 }
-

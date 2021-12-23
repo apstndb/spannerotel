@@ -16,11 +16,11 @@ import (
 )
 
 type interceptorOption struct {
-	statsSpanDecorators []StatsSpanDecorator
+	statsSpanDecorators  []StatsSpanDecorator
 	headerSpanDecorators []HeaderSpanDecorator
 }
 
-type Option func (*interceptorOption)
+type Option func(*interceptorOption)
 
 func WithDefaultDecorators() Option {
 	return func(option *interceptorOption) {
@@ -54,9 +54,9 @@ func StreamInterceptor(opts ...Option) func(ctx context.Context, desc *grpc.Stre
 
 type ClientStream struct {
 	grpc.ClientStream
-	ctx    context.Context
-	method string
-	desc   *grpc.StreamDesc
+	ctx                  context.Context
+	method               string
+	desc                 *grpc.StreamDesc
 	statsSpanDecorators  []StatsSpanDecorator
 	headerSpanDecorators []HeaderSpanDecorator
 }
@@ -77,15 +77,15 @@ func (l *ClientStream) RecvMsg(m interface{}) error {
 		stats = m.GetStats()
 	}
 	if stats != nil {
-		 for _, dec := range l.statsSpanDecorators {
-			 dec(ctx, sp, stats)
-		 }
-		 plantotrace.Span(ctx, stats)
+		for _, dec := range l.statsSpanDecorators {
+			dec(ctx, sp, stats)
+		}
+		plantotrace.Span(ctx, stats)
 	}
 
 	// don't override RecvMsg err
 	if md, err := l.ClientStream.Header(); err == nil {
-	// if md, _ := l.ClientStream.Header(); md.Len() > 0 {
+		// if md, _ := l.ClientStream.Header(); md.Len() > 0 {
 		for _, dec := range l.headerSpanDecorators {
 			dec(ctx, sp, md)
 		}
@@ -95,13 +95,13 @@ func (l *ClientStream) RecvMsg(m interface{}) error {
 	return err
 }
 
-type StatsSpanDecorator func (ctx context.Context, span trace.Span, stats *spanner.ResultSetStats)
-type HeaderSpanDecorator func (ctx context.Context, span trace.Span, header metadata.MD)
+type StatsSpanDecorator func(ctx context.Context, span trace.Span, stats *spanner.ResultSetStats)
+type HeaderSpanDecorator func(ctx context.Context, span trace.Span, header metadata.MD)
 
 type serverTiming struct {
-	Name string
+	Name       string
 	DurationMs int
-	Extra map[string]string
+	Extra      map[string]string
 }
 
 func split2(s, sep string) (head, rest string) {
@@ -130,9 +130,9 @@ func parseServerTiming(raw string) serverTiming {
 		}
 	}
 	return serverTiming{
-		Name: name,
+		Name:       name,
 		DurationMs: duration,
-		Extra: extra,
+		Extra:      extra,
 	}
 }
 
@@ -152,4 +152,3 @@ func queryTextSpanDecorator(ctx context.Context, span trace.Span, stats *spanner
 func elapsedTimeSpanDecorator(ctx context.Context, span trace.Span, stats *spanner.ResultSetStats) {
 	span.SetAttributes(attribute.String("elapsed_time", stats.GetQueryStats().GetFields()["elapsed_time"].GetStringValue()))
 }
-
